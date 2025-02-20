@@ -1,2 +1,2 @@
-# scala-mapreduce-sample
-A Scala MapReduce job that runs on a Pseudodistributed Hadoop cluster
+# scala-gen-ai-sandbox
+Sandbox to test some Gen AI internals like Tokenization, BPE's, Vector Embeddings etc.,
