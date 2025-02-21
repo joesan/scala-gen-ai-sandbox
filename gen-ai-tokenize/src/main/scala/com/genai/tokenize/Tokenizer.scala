@@ -10,11 +10,17 @@ import scala.annotation.tailrec
  */
 object Tokenizer extends App {
 
-  private val text = "This is a test for the sake of testing the test a test for the testing purposes another a test Zz ZZ Zz ÿ"
+  // Hyperparameters
+  private val vocabSize = 276
+  private val numMerges = vocabSize - 256
+
+  private val text = "I a test a test"
   private val tokens: Seq[Byte] = text.getBytes("ISO-8859-1").toSeq
-  val maxId = tokens.map(_.toInt & 0xFF).max
-  println(maxId)
-  print(getStats(tokens))
+  private val maxId = tokens.map(_.toInt & 0xFF).max + 1
+  private val merged = mergeTokens(10, tokens, maxId)
+  println(tokens)
+  println("****************")
+  println(merged)
 
   /**
    * Computes the frequency of consecutive byte pairs in a given sequence, sorted in descending order by frequency.
@@ -32,14 +38,17 @@ object Tokenizer extends App {
    *   println(stats)  // Example output: Map((108,108) -> 1, (104,101) -> 1, (101,108) -> 1, (108,111) -> 1)
    * }}}
    */
-  private def getStats(tokens: Seq[Byte]): Map[(Byte, Byte), Int] = {
+  private def getStats(tokens: Seq[Byte], descending: Boolean = true): Map[(Byte, Byte), Int] = {
     ListMap(
       tokens.sliding(2).collect { case Seq(a, b) => (a, b) }
         .toSeq
         .groupBy(identity)
         .view.mapValues(_.size)
         .toSeq
-        .sortWith(_._2 > _._2): _* // Sort descending
+        .sortWith {
+          case ((_, count1), (_, count2)) =>
+            if (descending) count1 > count2 else count1 < count2
+        }: _*  // This is to convert the sorted sequence into the ListMap
     )
   }
 
@@ -54,7 +63,7 @@ object Tokenizer extends App {
    * @return A new sequence with all occurrences of `pair` replaced by `idx`.
    */
   @tailrec
-  private def merge(ids: Seq[Int], pair: (Int, Int), idx: Int, acc: Seq[Int] = Seq()): Seq[Int] = {
+  private def merge(ids: Seq[Byte], pair: (Byte, Byte), idx: Byte, acc: Seq[Byte] = Seq()): Seq[Byte] = {
     ids match {
       case first +: second +: rest if first == pair._1 && second == pair._2 =>
         merge(rest, pair, idx, acc :+ idx) // Replace the pair and skip the next element
@@ -65,5 +74,24 @@ object Tokenizer extends App {
     }
   }
 
+  private def mergeTokens(numMerges: Int, ids: Seq[Byte], maxId: Int): (Seq[Byte], Map[(Byte, Byte), Int]) = {
+    @annotation.tailrec
+    def loop(i: Int, currentIds: Seq[Byte], merges: Map[(Byte, Byte), Int]): (Seq[Byte], Map[(Byte, Byte), Int]) = {
+      val stats = getStats(currentIds).collect { case (pair, count) if count > 1 => pair -> count }
+
+      // Stop if there are no more frequent pairs to merge
+      if (stats.isEmpty || i >= numMerges) (currentIds, merges)
+      else {
+        val (pair, _) = stats.head
+        val idx = (maxId + i).toByte
+        val newIds = merge(currentIds, pair, idx)
+        val newMerges = merges + (pair -> idx.toInt)
+
+        loop(i + 1, newIds, newMerges) // Continue merging
+      }
+    }
+
+    loop(0, ids, Map.empty)
+  }
 
 }
