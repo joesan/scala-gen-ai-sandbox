@@ -22,6 +22,7 @@ class DecoderSpec extends AnyFlatSpec with should.Matchers with BaseSpec {
   println(seqs)
   println(mergedPairs)
   println("---------")
+  
   "something" should "do something" in {
     val decoder = Decoder(updatedVocab)
   }

@@ -16,15 +16,16 @@ object Tokenizer extends App {
 
   private val text = "I a test a test"
   private val tokens: Seq[Byte] = text.getBytes("ISO-8859-1").toSeq
-  private val maxId = tokens.map(_.toInt & 0xFF).max + 1
+  //private val maxId = tokens.map(_.toInt & 0xFF).max + 1
+  private val maxId = 256
   private val merged = mergeTokens(10, tokens, maxId)
-  println(tokens)
+  /*println(tokens)
   println("************")
   println(s"maxId: $maxId")
   println("************")
   println(s"getStats: ${getStats(tokens)}")
   println("************")
-  println(merged)
+  println(merged) */
 
   /**
    * Computes the frequency of consecutive byte pairs in a given sequence, sorted in descending order by frequency.
