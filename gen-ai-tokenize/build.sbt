@@ -1,6 +1,6 @@
 val scala3Version = "3.6.3"
 
-lazy val root = project
+lazy val genAITokenize = project
   .in(file("."))
   .settings(
     name := "Scala 3 Project Template",
@@ -8,5 +8,7 @@ lazy val root = project
 
     scalaVersion := scala3Version,
 
-    libraryDependencies += "org.scalameta" %% "munit" % "1.0.0" % Test
+    libraryDependencies ++= Seq(
+      "org.scalatest" %% "scalatest" % "3.2.9" % Test
+    )
   )
