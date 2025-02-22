@@ -30,3 +30,22 @@ metals.sbt
 .idea
 .idea_modules
 /.worksheet/
+
+# Logs
+*.log
+logs/*
+
+# Ignore all target directories
+**/target/
+
+# Specifically ignore project/target directories
+**/project/target/
+
+# Ignore any target folders in the sub modules
+*/*/target/*
+*/*/project/target/*
+*/target/*
+*/project/target/*
+target/*
+project/target/*
+project/project/target/*
