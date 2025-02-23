@@ -29,20 +29,11 @@ object Tokenizer extends App {
   println(merged) */
 
   /**
-   * Computes the frequency of consecutive byte pairs in a given sequence, sorted in descending order by frequency.
+   * Computes statistics of adjacent token pairs in a sequence.
    *
-   * This function takes a sequence of bytes and counts how often each consecutive byte pair appears.
-   * It then returns the results sorted in descending order based on their frequency.
-   *
-   * @param tokens A sequence of bytes (e.g., UTF-8 encoded text).
-   * @return A sorted map where each key is a tuple of two consecutive bytes, and the value represents
-   *         the count of occurrences of that pair, sorted in descending order.
-   * @example
-   * {{{
-   *   val tokens: Seq[Byte] = "hello".getBytes("UTF-8")
-   *   val stats = getStats(tokens)
-   *   println(stats)  // Example output: Map((108,108) -> 1, (104,101) -> 1, (101,108) -> 1, (108,111) -> 1)
-   * }}}
+   * @param tokens     The sequence of token IDs.
+   * @param descending If true, sorts by frequency in descending order.
+   * @return A map of token pairs and their frequencies, sorted by occurrence.
    */
   def getStats(tokens: Seq[Int], descending: Boolean = true): Map[(Int, Int), Int] = {
     ListMap(
@@ -59,14 +50,13 @@ object Tokenizer extends App {
   }
 
   /**
-   * Merges a sequence of integers by replacing consecutive occurrences of a specified pair with a new token.
-   * This function is tail-recursive for optimized performance.
+   * Merges occurrences of a specific token pair in the sequence.
    *
-   * @param ids  The sequence of integers to process.
-   * @param pair The pair of consecutive integers to replace.
-   * @param idx  The new integer that replaces occurrences of `pair`.
-   * @param acc  An accumulator storing the modified sequence (default: empty sequence).
-   * @return A new sequence with all occurrences of `pair` replaced by `idx`.
+   * @param ids  The original sequence of token IDs.
+   * @param pair The token pair to be merged.
+   * @param idx  The new token ID replacing the pair.
+   * @param acc  Accumulator for recursive merging (default: empty sequence).
+   * @return The updated sequence with the merged token.
    */
   @tailrec
   def merge(ids: Seq[Int], pair: (Int, Int), idx: Int, acc: Seq[Int] = Seq()): Seq[Int] = {
@@ -80,6 +70,14 @@ object Tokenizer extends App {
     }
   }
 
+  /**
+   * Performs Byte Pair Encoding (BPE) on a sequence of tokens.
+   *
+   * @param numMerges The number of merges to perform.
+   * @param ids       The initial sequence of token IDs.
+   * @param maxId     The starting ID for newly created tokens.
+   * @return A tuple containing the new token sequence and the merge mappings.
+   */
   def mergeTokens(numMerges: Int, ids: Seq[Int], maxId: Int): (Seq[Int], Map[(Int, Int), Int]) = {
     @annotation.tailrec
     def loop(i: Int, currentIds: Seq[Int], merges: Map[(Int, Int), Int]): (Seq[Int], Map[(Int, Int), Int]) = {
@@ -89,17 +87,12 @@ object Tokenizer extends App {
       else {
         val (pair, _) = stats.head
         val idx = maxId + i // Keep as Int to prevent overflow
-
         println(s"Merging $pair -> New Token: $idx")
-
         val newIds = merge(currentIds, pair, idx)
         val newMerges = merges + (pair -> idx)
-
         loop(i + 1, newIds, newMerges)
       }
     }
-
     loop(0, ids, Map.empty)
   }
-
 }
