@@ -11,12 +11,11 @@ import org.scalatest.Assertions._
 class TokenizerSpec extends AnyFlatSpec with should.Matchers with BaseSpec {
 
   "Tokenizer#getStats" should "fetch the List of recurrent pairs" in {
-    assert(ListMap((97,32) -> 2, (32,116) -> 2, (32,97) -> 1, (116,32) -> 1) == Tokenizer.getStats(bytes))
+    assert(ListMap((97,32) -> 2, (32,116) -> 2, (32,97) -> 1, (116,32) -> 1) == Tokenizer.getStats(unsignedValues))
   }
 
   "Tokenizer#mergeTokens" should "merge the tokens" in {
-    println(maxId)
-    assert(Tokenizer.mergeTokens(4, bytes, 256)._1 == List(118, 32, 118))
-    assert(Tokenizer.mergeTokens(2, bytes, 256)._1 == List(118, 32, 118))
+    assert(Tokenizer.mergeTokens(4, unsignedValues, maxId)._1 == List(257, 32, 257))
+    assert(Tokenizer.mergeTokens(2, unsignedValues, maxId)._1 == List(257, 32, 257))
   }
 }

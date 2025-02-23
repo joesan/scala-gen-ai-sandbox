@@ -18,7 +18,8 @@ object Tokenizer extends App {
   private val tokens: Seq[Byte] = text.getBytes("ISO-8859-1").toSeq
   //private val maxId = tokens.map(_.toInt & 0xFF).max + 1
   private val maxId = 256
-  private val merged = mergeTokens(10, tokens, maxId)
+  val unsignedValue = tokens.map(byte => java.lang.Byte.toUnsignedInt(byte))
+  private val merged = mergeTokens(10, unsignedValue, maxId)
   /*println(tokens)
   println("************")
   println(s"maxId: $maxId")
@@ -43,7 +44,7 @@ object Tokenizer extends App {
    *   println(stats)  // Example output: Map((108,108) -> 1, (104,101) -> 1, (101,108) -> 1, (108,111) -> 1)
    * }}}
    */
-  def getStats(tokens: Seq[Byte], descending: Boolean = true): Map[(Byte, Byte), Int] = {
+  def getStats(tokens: Seq[Int], descending: Boolean = true): Map[(Int, Int), Int] = {
     ListMap(
       tokens.sliding(2).collect { case Seq(a, b) => (a, b) }
         .toSeq
@@ -53,7 +54,7 @@ object Tokenizer extends App {
         .sortWith {
           case ((_, count1), (_, count2)) =>
             if (descending) count1 > count2 else count1 < count2
-        }: _*  // This is to convert the sorted sequence into the ListMap
+        }: _*
     )
   }
 
@@ -68,31 +69,33 @@ object Tokenizer extends App {
    * @return A new sequence with all occurrences of `pair` replaced by `idx`.
    */
   @tailrec
-  def merge(ids: Seq[Byte], pair: (Byte, Byte), idx: Byte, acc: Seq[Byte] = Seq()): Seq[Byte] = {
+  def merge(ids: Seq[Int], pair: (Int, Int), idx: Int, acc: Seq[Int] = Seq()): Seq[Int] = {
     ids match {
       case first +: second +: rest if first == pair._1 && second == pair._2 =>
-        merge(rest, pair, idx, acc :+ idx) // Replace the pair and skip the next element
+        merge(rest, pair, idx, acc :+ idx) // Replace pair with new token
       case first +: rest =>
-        merge(rest, pair, idx, acc :+ first) // Keep the element and continue
+        merge(rest, pair, idx, acc :+ first) // Keep token and continue
       case Nil =>
-        acc // Return accumulated result when the list is empty
+        acc // Return accumulated result
     }
   }
 
-  def mergeTokens(numMerges: Int, ids: Seq[Byte], maxId: Int): (Seq[Byte], Map[(Byte, Byte), Int]) = {
+  def mergeTokens(numMerges: Int, ids: Seq[Int], maxId: Int): (Seq[Int], Map[(Int, Int), Int]) = {
     @annotation.tailrec
-    def loop(i: Int, currentIds: Seq[Byte], merges: Map[(Byte, Byte), Int]): (Seq[Byte], Map[(Byte, Byte), Int]) = {
+    def loop(i: Int, currentIds: Seq[Int], merges: Map[(Int, Int), Int]): (Seq[Int], Map[(Int, Int), Int]) = {
       val stats = getStats(currentIds).collect { case (pair, count) if count > 1 => pair -> count }
 
-      // Stop if there are no more frequent pairs to merge
       if (stats.isEmpty || i >= numMerges) (currentIds, merges)
       else {
         val (pair, _) = stats.head
-        val idx = (maxId + i).toByte
-        val newIds = merge(currentIds, pair, idx)
-        val newMerges = merges + (pair -> idx.toInt)
+        val idx = maxId + i // Keep as Int to prevent overflow
 
-        loop(i + 1, newIds, newMerges) // Continue merging
+        println(s"Merging $pair -> New Token: $idx")
+
+        val newIds = merge(currentIds, pair, idx)
+        val newMerges = merges + (pair -> idx)
+
+        loop(i + 1, newIds, newMerges)
       }
     }
 
