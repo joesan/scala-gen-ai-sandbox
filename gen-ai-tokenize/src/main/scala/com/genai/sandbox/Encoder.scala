@@ -11,7 +11,7 @@ import scala.annotation.tailrec
  * @param merges A map where keys are token pairs `(Int, Int)` that should be merged,
  *               and values are new token indices assigned to the merged pairs.
  */
-class Encoder(merges: Map[(Int, Int), Int]) {
+object Encoder {
 
   /**
    * Encodes a given string into a sequence of token IDs.
