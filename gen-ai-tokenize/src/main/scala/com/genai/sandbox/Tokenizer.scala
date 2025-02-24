@@ -20,13 +20,6 @@ object Tokenizer extends App {
   private val maxId = 256
   val unsignedValue = tokens.map(byte => java.lang.Byte.toUnsignedInt(byte))
   private val merged = mergeTokens(10, unsignedValue, maxId)
-  /*println(tokens)
-  println("************")
-  println(s"maxId: $maxId")
-  println("************")
-  println(s"getStats: ${getStats(tokens)}")
-  println("************")
-  println(merged) */
 
   /**
    * Computes statistics of adjacent token pairs in a sequence.
