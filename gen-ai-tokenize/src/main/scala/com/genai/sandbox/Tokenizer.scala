@@ -19,7 +19,6 @@ object Tokenizer extends App {
   //private val maxId = tokens.map(_.toInt & 0xFF).max + 1
   private val maxId = 256
   val unsignedValue = tokens.map(byte => java.lang.Byte.toUnsignedInt(byte))
-  private val merged = mergeTokens(10, unsignedValue, maxId)
 
   /**
    * Computes statistics of adjacent token pairs in a sequence.
@@ -71,14 +70,15 @@ object Tokenizer extends App {
    * @param maxId     The starting ID for newly created tokens.
    * @return A tuple containing the new token sequence and the merge mappings.
    */
-  def mergeTokens(numMerges: Int, ids: Seq[Int], maxId: Int): (Seq[Int], Map[(Int, Int), Int]) = {
+  def mergeTokens(numMerges: Int = numMerges, ids: Seq[Int], maxId: Int): (Seq[Int], Map[(Int, Int), Int]) = {
     @annotation.tailrec
     def loop(i: Int, currentIds: Seq[Int], merges: Map[(Int, Int), Int]): (Seq[Int], Map[(Int, Int), Int]) = {
-      val stats = getStats(currentIds).collect { case (pair, count) if count > 1 => pair -> count }
+      // Get the count of pairs in descending order, max. pair count will appear first
+      val pairStats = getStats(currentIds).collect { case (pair, count) if count > 1 => pair -> count }
 
-      if (stats.isEmpty || i >= numMerges) (currentIds, merges)
+      if (pairStats.isEmpty || i >= numMerges) (currentIds, merges)
       else {
-        val (pair, _) = stats.head
+        val (pair, _) = pairStats.head
         val idx = maxId + i // Keep as Int to prevent overflow
         println(s"Merging $pair -> New Token: $idx")
         val newIds = merge(currentIds, pair, idx)

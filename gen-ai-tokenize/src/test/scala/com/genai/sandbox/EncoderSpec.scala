@@ -1,9 +1,14 @@
 package com.genai.sandbox
 
+import com.genai.sandbox
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should
 
 class EncoderSpec extends AnyFlatSpec with should.Matchers with BaseSpec {
+
+  // Set up the test data
+  val (seqs, mergedPairs) = Tokenizer.mergeTokens(4, unsignedValues, maxId)
+  val updatedVocab: Map[Int, Array[Int]] = sandbox.updatedVocab(mergedPairs)
 
   val (_, merges) = Tokenizer.mergeTokens(4, unsignedValues, maxId)
 

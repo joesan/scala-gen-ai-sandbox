@@ -15,7 +15,7 @@ class TokenizerSpec extends AnyFlatSpec with should.Matchers with BaseSpec {
   }
 
   "Tokenizer#mergeTokens" should "merge the tokens" in {
-    assert(Tokenizer.mergeTokens(4, unsignedValues, maxId)._1 == List(257, 32, 257))
-    assert(Tokenizer.mergeTokens(2, unsignedValues, maxId)._1 == List(257, 32, 257))
+    assert(Tokenizer.mergeTokens(ids = unsignedValues, maxId = maxId)._1 == List(257, 32, 257))
+    assert(Tokenizer.mergeTokens(ids = unsignedValues, maxId = maxId)._1 == List(257, 32, 257))
   }
 }
