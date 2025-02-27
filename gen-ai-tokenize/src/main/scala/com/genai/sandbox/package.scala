@@ -31,6 +31,7 @@ package object sandbox {
   def updatedVocab(mergedPairs: Map[(Int, Int), Int]): Map[Int, Array[Int]] = {
     mergedPairs.foldLeft(vocab()) {
       case (currentVocab, ((p0, p1), idx)) =>
+        println()
         val token1 = currentVocab(p0) // Retrieve the first token
         val token2 = currentVocab(p1) // Retrieve the second token
         currentVocab + (idx -> (token1 ++ token2)) // Merge and update

@@ -70,9 +70,9 @@ object Tokenizer extends App {
    * @param maxId     The starting ID for newly created tokens.
    * @return A tuple containing the new token sequence and the merge mappings.
    */
-  def mergeTokens(numMerges: Int = numMerges, ids: Seq[Int], maxId: Int): (Seq[Int], Map[(Int, Int), Int]) = {
+  def mergeTokens(numMerges: Int = numMerges, ids: Seq[Int], maxId: Int): (Seq[Int], ListMap[(Int, Int), Int]) = {
     @annotation.tailrec
-    def loop(i: Int, currentIds: Seq[Int], merges: Map[(Int, Int), Int]): (Seq[Int], Map[(Int, Int), Int]) = {
+    def loop(i: Int, currentIds: Seq[Int], merges: ListMap[(Int, Int), Int]): (Seq[Int], ListMap[(Int, Int), Int]) = {
       // Get the count of pairs in descending order, max. pair count will appear first
       val pairStats = getStats(currentIds).collect { case (pair, count) if count > 1 => pair -> count }
 
@@ -86,6 +86,6 @@ object Tokenizer extends App {
         loop(i + 1, newIds, newMerges)
       }
     }
-    loop(0, ids, Map.empty)
+    loop(0, ids, ListMap.empty)
   }
 }
