@@ -21,10 +21,8 @@ class EncodeDecodeSpec extends AnyFlatSpec with should.Matchers with BaseSpec {
       .toSeq.
       map(byte => java.lang.Byte.toUnsignedInt(byte))
 
-  val (_, mergedPairs) = Tokenizer.mergeTokens(numMerges = 20, ids = unsignedValues, maxId = maxId)
+  val (_, mergedPairs) = Tokenizer.mergeTokens(numMerges = 200, ids = unsignedValues, maxId = maxId)
   val vocab: Map[Int, Array[Int]] = sandbox.updatedVocab(mergedPairs)
-  println("**********")
-  println(vocab.size)
 
   "Encode & Decode" should "encode and decode the input text" in {
     val encoded = Encoder.encode(text, mergedPairs)
