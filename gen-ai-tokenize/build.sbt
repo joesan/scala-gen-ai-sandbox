@@ -9,6 +9,7 @@ lazy val genAITokenize = project
     scalaVersion := scala3Version,
 
     libraryDependencies ++= Seq(
+      "com.typesafe.scala-logging" %% "scala-logging" % "3.9.4",
       "org.scalatest" %% "scalatest" % "3.2.9" % Test
     )
   )
