@@ -86,6 +86,8 @@ object Tokenizer extends App {
         loop(i + 1, newIds, newMerges)
       }
     }
+    require(ids.nonEmpty, "Token sequence cannot be empty")
+    require(numMerges >= 0, "Number of merges must be non-negative")
     loop(0, ids, ListMap.empty)
   }
 }
