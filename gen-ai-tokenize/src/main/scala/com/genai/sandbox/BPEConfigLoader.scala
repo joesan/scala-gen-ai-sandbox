@@ -1,15 +1,13 @@
 package com.genai.sandbox
 
 import com.typesafe.config.{Config, ConfigFactory}
-import scala.jdk.CollectionConverters._ // For Java-to-Scala conversions if needed
 
 
 object BPEConfigLoader {
 
-  def load(): BpeConfig = {
-    val config: Config = ConfigFactory.load().getConfig("bpe")
+  def load(env: String = "application.conf"): BpeConfig = {
+    val config: Config = ConfigFactory.load(env).getConfig("bpe")
 
-    // Load nested configs
     val vocabCfg = config.getConfig("vocab")
     val tokenizationCfg = config.getConfig("tokenization")
     val filesCfg = config.getConfig("files")

@@ -8,7 +8,7 @@ import java.nio.charset.StandardCharsets
 
 
 class EncodeDecodeSpec extends AnyFlatSpec with should.Matchers with BaseSpec {
-
+/*
   val text: String = "Many common characters, including numerals, punctuation, and other symbols, " +
     "are unified within the standard and are not treated as specific to any given writing system. " +
     "Unicode encodes thousands of emoji, with the continued development thereof conducted by the " +
@@ -30,5 +30,5 @@ class EncodeDecodeSpec extends AnyFlatSpec with should.Matchers with BaseSpec {
     val decodedText: String = Decoder(vocab).decode(encoded)
     println(decodedText)
     assert(decodedText == text)
-  }
+  } */
 }

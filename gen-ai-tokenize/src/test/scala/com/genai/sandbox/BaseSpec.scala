@@ -5,11 +5,6 @@ import java.nio.charset.StandardCharsets
 
 
 trait BaseSpec {
-  val inputChars: Seq[Char] = ('a' to 'z') ++ ('A' to 'Z') ++ ('0' to '9') :+ ' '
-  val inputVocab: Map[String, Int] =
-    inputChars.zipWithIndex.map { case (ch, idx) => ch.toString -> idx }.toMap
-  println(s"Input Vocabulary Size: ${inputVocab.size}")
-
   // Input contains 7 bytes - 4 characters and 3 spaces
   val inputText: String = "a t a t"
 
@@ -21,7 +16,7 @@ trait BaseSpec {
   val maxId = 256
   
   // Load the default config for BPE
-  val bpeConfig: BpeConfig = BPEConfigLoader.load()
+  val bpeConfig: BpeConfig = BPEConfigLoader.load("application.test.conf")
 
   /**
    * Generates random words composed of specified characters.
