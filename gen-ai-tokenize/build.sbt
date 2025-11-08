@@ -5,11 +5,9 @@ lazy val genAITokenize = project
   .settings(
     name := "Scala 3 Project Template",
     version := "0.1.0-SNAPSHOT",
-
     scalaVersion := scala3Version,
-
     libraryDependencies ++= Seq(
-      "com.typesafe" % "config" % "1.4.3",
+      "com.typesafe" % "config" % "1.4.4",
       "com.typesafe.scala-logging" %% "scala-logging" % "3.9.4",
       "org.scalatest" %% "scalatest" % "3.2.9" % Test
     )
