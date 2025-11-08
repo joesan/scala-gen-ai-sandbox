@@ -15,7 +15,7 @@ object Tokenizer extends App {
   private val numMerges = vocabSize - 256
 
   private val text = "I a test a test"
-  private val tokens: Seq[Byte] = text.getBytes("ISO-8859-1").toSeq
+  private val tokens: Seq[Byte] = text.getBytes("UTF-8").toSeq
   //private val maxId = tokens.map(_.toInt & 0xFF).max + 1
   private val maxId = 256
   val unsignedValue = tokens.map(byte => java.lang.Byte.toUnsignedInt(byte))

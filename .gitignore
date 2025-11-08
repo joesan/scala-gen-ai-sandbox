@@ -1,2 +1,60 @@
+# =========================
+# IntelliJ IDEA
+# =========================
+.idea/
+*.iws
+*.iml
+*.ipr
+out/
+
+# Workspace-specific files
+.idea/workspace.xml
+.idea/tasks.xml
+.idea/dictionaries
+.idea/libraries
+
+# =========================
+# SBT / Scala
+# =========================
+target/
+project/target/
+project/project/
+dist/
+bin/
+
+# Dependency caches
+lib_managed/
+ivy2/
+coursier/
+
+# =========================
+# OS-specific
+# =========================
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# =========================
+# Logs
+# =========================
+*.log
+
+# =========================
+# Generated files
+# =========================
+*.class
+*.war
+*.jar
+*.zip
+
+# =========================
+# Misc
+# =========================
+*.swp
+*~
 .idea
 out/**

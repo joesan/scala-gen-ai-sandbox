@@ -4,6 +4,16 @@ import scala.collection.immutable.ListMap
 
 package object sandbox {
 
+  case class VocabConfig(maxSize: Int, maxMerges: Int)
+  case class TokenizationConfig(minPairFrequency: Int, includeWhitespace: Boolean)
+  case class FilesConfig(vocabFile: String, mergesFile: String)
+  case class BpeConfig(
+    vocab: VocabConfig,
+    inputChars: String,
+    tokenization: TokenizationConfig,
+    files: FilesConfig
+  )
+
   private val maxInitialVocabSize = 256
 
   // Hyperparameters TODO: Get these from a conf file externally
@@ -19,6 +29,16 @@ package object sandbox {
    */
   def vocab(max: Int = maxInitialVocabSize): ListMap[Int, Array[Int]] = {
     ListMap.from((0 until max).map(i => i -> Array(i)))
+  }
+
+  /**
+   * Generates a vocabulary from the provided input vocabulary mapping.
+   *
+   * @param inputVocab A map where keys are string tokens and values are their corresponding integer IDs.
+   * @return A `ListMap` where each key is an integer ID, and the value is an array containing that ID.
+   */
+  def vocab(inputVocab: Map[String, Int]): ListMap[Int, Array[Int]] = {
+    ListMap.from(inputVocab.values.map(id => id -> Array(id)))
   }
 
   /**

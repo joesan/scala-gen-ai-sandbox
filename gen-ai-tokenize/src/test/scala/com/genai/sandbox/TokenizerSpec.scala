@@ -10,7 +10,7 @@ import org.scalatest.Assertions._
 // https://scalameta.org/munit/docs/getting-started.html
 class TokenizerSpec extends AnyFlatSpec with should.Matchers with BaseSpec {
 
-  "Tokenizer#mergeTokens" should "deal with invalid inputs" in {
+  "Tokenizer.mergeTokens(...)" should "deal with invalid inputs" in {
     assertThrows[IllegalArgumentException] {
       Tokenizer.mergeTokens(ids = Seq.empty, maxId = maxId)
     }
@@ -19,11 +19,11 @@ class TokenizerSpec extends AnyFlatSpec with should.Matchers with BaseSpec {
     }
   }
 
-  "Tokenizer#getStats" should "fetch the List of recurrent pairs" in {
-    assert(ListMap((97,32) -> 2, (32,116) -> 2, (32,97) -> 1, (116,32) -> 1) == Tokenizer.getStats(unsignedValues))
+  "Tokenizer.getStats(...)" should "fetch the List of recurrent pairs" in {
+    assert(Tokenizer.getStats(unsignedValues) == ListMap((97,32) -> 2, (32,116) -> 2, (32,97) -> 1, (116,32) -> 1))
   }
 
-  "Tokenizer#mergeTokens" should "merge the tokens" in {
+  "Tokenizer.mergeTokens(...)" should "merge the tokens" in {
     assert(Tokenizer.mergeTokens(ids = unsignedValues, maxId = maxId)._1 == List(257, 32, 257))
   }
 }
