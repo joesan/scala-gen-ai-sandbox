@@ -3,7 +3,8 @@ package com.genai.sandbox
 import com.typesafe.config.{Config, ConfigFactory}
 import scala.jdk.CollectionConverters._ // For Java-to-Scala conversions if needed
 
-object BpeConfigLoader {
+
+object BPEConfigLoader {
 
   def load(): BpeConfig = {
     val config: Config = ConfigFactory.load().getConfig("bpe")
@@ -18,7 +19,7 @@ object BpeConfigLoader {
         maxSize = vocabCfg.getInt("max-size"),
         maxMerges = vocabCfg.getInt("max-merges")
       ),
-      inputChars = config.getString("input-chars"),
+      inputChars = config.getString("input-chars").toCharArray.toSeq,
       tokenization = TokenizationConfig(
         minPairFrequency = tokenizationCfg.getInt("min-pair-frequency"),
         includeWhitespace = tokenizationCfg.getBoolean("include-whitespace")

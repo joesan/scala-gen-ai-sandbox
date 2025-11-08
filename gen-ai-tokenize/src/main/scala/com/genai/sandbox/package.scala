@@ -4,12 +4,19 @@ import scala.collection.immutable.ListMap
 
 package object sandbox {
 
+  case class EncodedOutput(
+    encodedTokens: Seq[Int], 
+    merged: Map[(Int, Int), Int], 
+    updatedVocab: ListMap[String, Int], 
+    nextTokenId: Int
+  )
+  
   case class VocabConfig(maxSize: Int, maxMerges: Int)
   case class TokenizationConfig(minPairFrequency: Int, includeWhitespace: Boolean)
   case class FilesConfig(vocabFile: String, mergesFile: String)
   case class BpeConfig(
     vocab: VocabConfig,
-    inputChars: String,
+    inputChars: Seq[Char],
     tokenization: TokenizationConfig,
     files: FilesConfig
   )

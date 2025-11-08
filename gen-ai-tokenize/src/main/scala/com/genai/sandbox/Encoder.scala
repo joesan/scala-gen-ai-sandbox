@@ -1,9 +1,10 @@
 package com.genai.sandbox
 
-import com.genai.sandbox.Tokenizer.{getStats, merge}
+import com.genai.sandbox.BPEApp.merge
 
 import java.nio.charset.StandardCharsets
 import scala.annotation.tailrec
+import scala.collection.immutable.ListMap
 
 /**
  * Encoder is a utility class that provides a function to encode a string into a sequence of token IDs.
@@ -16,16 +17,16 @@ object Encoder {
   /**
    * Encodes a given string into a sequence of token IDs.
    *
-   * @param text   The input string to encode.
+   * @param inputText   The input string to encode.
    * @param merges A mapping of token pairs to their merged token ID.
    * @return A sequence of token IDs representing the encoded text.
    */
-  def encode(text: String, merges: Map[(Int, Int), Int]): Seq[Int] = {
+  def encode(inputText: String, inputVocab: ListMap[String, Int], merges: Map[(Int, Int), Int]): Seq[Int] = {
     @tailrec
     def loop(tokens: Seq[Int]): Seq[Int] = tokens match {
       case _ if tokens.length < 2 => tokens // Base case: No more pairs to merge
       case _ =>
-        val stats = getStats(tokens) // Compute frequency of adjacent token pairs
+        val stats = TokenEncoder.getStats(tokens) // Compute frequency of adjacent token pairs
         val pair = stats.keys.minBy(p => merges.getOrElse(p, Int.MaxValue))
 
         merges.get(pair) match {
@@ -33,8 +34,6 @@ object Encoder {
           case None => tokens // No more mergeable pairs, return final tokens
         }
     }
-
-    val initialTokens = text.getBytes(StandardCharsets.ISO_8859_1).toSeq.map(byte => java.lang.Byte.toUnsignedInt(byte))
-    loop(initialTokens)
+    loop(Tokenizer.tokenize(inputText, inputVocab))
   }
 }

@@ -19,6 +19,9 @@ trait BaseSpec {
 
   //val maxId = bytes.map(_.toInt & 0xFF).max + 1
   val maxId = 256
+  
+  // Load the default config for BPE
+  val bpeConfig: BpeConfig = BPEConfigLoader.load()
 
   /**
    * Generates random words composed of specified characters.
