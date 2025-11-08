@@ -2,21 +2,15 @@ package com.genai.sandbox
 
 import scala.util.Random
 import java.nio.charset.StandardCharsets
+import scala.collection.immutable.ListMap
 
 
 trait BaseSpec {
-  // Input contains 7 bytes - 4 characters and 3 spaces
-  val inputText: String = "a t a t"
 
-  // bytes will now be - ArraySeq(97, 32, 116, 32, 97, 32, 116)
-  val bytes: Seq[Byte] = inputText.getBytes(StandardCharsets.UTF_8).toSeq
-  val unsignedValues: Seq[Int] = bytes.map(byte => java.lang.Byte.toUnsignedInt(byte))
-
-  //val maxId = bytes.map(_.toInt & 0xFF).max + 1
-  val maxId = 256
-  
   // Load the default config for BPE
   val bpeConfig: BpeConfig = BPEConfigLoader.load("application.test.conf")
+  val inputVocab: ListMap[String, Int] = Tokenizer.buildInputVocab(bpeConfig.inputChars)
+  val nextId: Int = inputVocab.size
 
   /**
    * Generates random words composed of specified characters.

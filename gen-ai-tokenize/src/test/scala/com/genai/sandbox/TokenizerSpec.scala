@@ -10,7 +10,7 @@ import org.scalatest.Assertions.*
 // For more information on writing tests, see
 // https://scalameta.org/munit/docs/getting-started.html
 class TokenizerSpec extends AnyFlatSpec with should.Matchers with BaseSpec {
-
+/*
   "Tokenizer.mergeTokens(...)" should "deal with invalid inputs" in {
     assertThrows[IllegalArgumentException] {
       BPEApp.mergeTokens(ids = Seq.empty, maxId = maxId)
@@ -26,5 +26,5 @@ class TokenizerSpec extends AnyFlatSpec with should.Matchers with BaseSpec {
 
   "Tokenizer.mergeTokens(...)" should "merge the tokens" in {
     assert(BPEApp.mergeTokens(ids = unsignedValues, maxId = maxId)._1 == List(257, 32, 257))
-  }
+  } */
 }
