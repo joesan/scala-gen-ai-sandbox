@@ -14,6 +14,7 @@ object BPEConfigLoader {
 
     BpeConfig(
       vocabConfig = VocabConfig(
+        encoding = vocabCfg.getString("encoding"),
         maxSize = vocabCfg.getInt("max-size"),
         maxMerges = vocabCfg.getInt("max-merges"),
         mergeSeperator = vocabCfg.getString("merge-separator"),

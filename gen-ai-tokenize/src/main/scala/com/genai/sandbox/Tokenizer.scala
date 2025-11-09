@@ -35,8 +35,8 @@ final class Tokenizer(vocabConfig: VocabConfig) {
    * Tokenize a text string into token IDs using the given vocabulary.
    */
   def tokenize(text: String, inputVocab: ListMap[String, Int]): Seq[Int] = {
-    text.getBytes("ISO-8859-1").map { b =>
-      val token = new String(Array(b), "ISO-8859-1")  // convert byte to string token
+    text.getBytes(vocabConfig.encoding).map { b =>
+      val token = new String(Array(b), vocabConfig.encoding)  // convert byte to string token
       inputVocab.getOrElse(token, inputVocab(vocabConfig.unkToken))
     }.toSeq
   }

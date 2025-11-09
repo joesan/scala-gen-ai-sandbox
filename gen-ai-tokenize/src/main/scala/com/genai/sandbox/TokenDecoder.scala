@@ -18,7 +18,10 @@ final class TokenDecoder(vocabConfig: VocabConfig) {
     }
 
     // decode each token ID → token string → expanded form
-    tokens.map(id => expand(idToToken.getOrElse(id, vocabConfig.unkToken))).mkString
+    tokens.map { id =>
+      val token = idToToken.getOrElse(id, vocabConfig.unkToken)
+      new String(token.getBytes(vocabConfig.encoding), vocabConfig.encoding) // ensures same byte->char mapping
+    }.mkString
   }
 }
 object TokenDecoder {
