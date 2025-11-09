@@ -3,8 +3,15 @@ name: Scala BPE App CI
 on:
   push:
     branches: [main, master]
+    # Ignore changes to README.md and docs folder
+    paths-ignore:
+      - 'README.md'
+      - 'docs/**'
   pull_request:
     branches: [main, master]
+    paths-ignore:
+      - 'README.md'
+      - 'docs/**'
 
 jobs:
   build:
