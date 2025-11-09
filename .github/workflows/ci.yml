@@ -1,4 +1,4 @@
-name: Scala BPE CI
+name: Scala BPE App
 
 on:
   push:
@@ -8,11 +8,10 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: Checkout code
         uses: actions/checkout@v3
 
       - name: Set up JDK 17
@@ -21,24 +20,24 @@ jobs:
           distribution: temurin
           java-version: 17
 
-      - name: Set up sbt
-        uses: olafurpg/setup-scala@v13
-        with:
-          sbt-version: 1.9.3
-          java-version: 17
-
-      - name: Cache sbt dependencies
+      # Cache SBT launcher
+      - name: Cache sbt launcher
         uses: actions/cache@v3
         with:
           path: |
-            ~/.ivy2/cache
             ~/.sbt
-          key: ${{ runner.os }}-sbt-${{ hashFiles('**/build.sbt') }}
-          restore-keys: |
-            ${{ runner.os }}-sbt-
+            ~/.ivy2/cache
+            ~/.coursier
+          key: sbt-${{ runner.os }}-${{ hashFiles('**/build.sbt') }}
 
-      - name: Run unit tests
+      - name: Install sbt
+        run: |
+          curl -L -o sbt.zip https://github.com/sbt/sbt/releases/download/v1.10.6/sbt-1.10.6.zip
+          unzip sbt.zip -d $HOME/sbt
+          export PATH="$HOME/sbt/bin:$PATH"
+
+      - name: Run tests
         run: sbt test
 
-      - name: Run main application
+      - name: Run main app
         run: sbt "runMain com.genai.sandbox.BPEApp"
