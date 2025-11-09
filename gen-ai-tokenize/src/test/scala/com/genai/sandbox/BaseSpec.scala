@@ -9,7 +9,14 @@ trait BaseSpec {
 
   // Load the default config for BPE
   val bpeConfig: BpeConfig = BPEConfigLoader.load("application.test.conf")
-  val inputVocab: ListMap[String, Int] = Tokenizer.buildInputVocab(bpeConfig.inputChars)
+  
+  // Instantiate the necessary classes
+  val tokenizer: Tokenizer = Tokenizer(bpeConfig.vocabConfig)
+  val encoder: TokenEncoder = TokenEncoder(bpeConfig.vocabConfig)
+  val decoder: TokenDecoder = TokenDecoder(bpeConfig.vocabConfig)
+  
+  // Initialize the vocabulary
+  val inputVocab: ListMap[String, Int] = tokenizer.buildInputVocab(bpeConfig.inputChars)
   val nextId: Int = inputVocab.size
 
   /**

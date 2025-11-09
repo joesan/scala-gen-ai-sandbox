@@ -9,29 +9,6 @@ import scala.collection.immutable.ListMap
  */
 final class TokenEncoder(vocabConfig: VocabConfig) {
 
-  private type Pair = (Int, Int)
-  private type Count = Int
-  private type TokenID = Int
-
-  /**
-   * Computes statistics of adjacent token pairs in a sequence.
-   *
-   * @param tokens     The sequence of token IDs.
-   * @param descending If true, sorts by frequency in descending order.
-   * @return A map of token pairs and their frequencies, sorted by occurrence.
-   */
-  def getStats(tokens: Seq[Int], descending: Boolean = true): ListMap[Pair, Count] = ListMap.from {
-    tokens.sliding(2).collect { case Seq(a, b) => (a, b) }
-      .toSeq
-      .groupBy(identity)
-      .view.mapValues(_.size)
-      .toSeq
-      .sortWith {
-        case ((_, count1), (_, count2)) =>
-          if (descending) count1 > count2 else count1 < count2
-      }
-  }
-
   /**
    * Merges occurrences of a specific token pair in the sequence.
    *
@@ -60,7 +37,7 @@ final class TokenEncoder(vocabConfig: VocabConfig) {
    * @param nextId Next available token ID
    * @return EncodedOutput(newTokens, updatedMerges, updatedVocab, newNextId)
    */
-  def merge(tokens: Seq[Int], vocab: ListMap[String, TokenID], merges: Map[(Int, Int), Int], nextId: Int): EncodedOutput = {
+  def encode(tokens: Seq[Int], vocab: ListMap[String, TokenID], merges: Map[(Int, Int), Int], nextId: Int): EncodedOutput = {
     /** Tail-recursive merge loop */
     @tailrec
     def loop(tokens: Seq[Int], merges: Map[(Int, Int), Int], vocab: ListMap[String, TokenID], nextId: Int): EncodedOutput = tokens match {

@@ -1,6 +1,5 @@
 package com.genai.sandbox
 
-import com.genai.sandbox.TokenEncoder.getStats
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should
 
@@ -10,21 +9,48 @@ import org.scalatest.Assertions.*
 // For more information on writing tests, see
 // https://scalameta.org/munit/docs/getting-started.html
 class TokenizerSpec extends AnyFlatSpec with should.Matchers with BaseSpec {
-/*
-  "Tokenizer.mergeTokens(...)" should "deal with invalid inputs" in {
-    assertThrows[IllegalArgumentException] {
-      BPEApp.mergeTokens(ids = Seq.empty, maxId = maxId)
-    }
-    assertThrows[IllegalArgumentException] {
-      BPEApp.mergeTokens(numMerges = -2, ids = Seq.empty, maxId = maxId)
-    }
+
+  "Tokenizer.buildInputVocab" should "build a correct ListMap with <unk> at the end" in {
+    val inputChars = Seq('a', 'b', 'c')
+    val vocab = tokenizer.buildInputVocab(inputChars)
+
+    // Check that all input characters are included
+    assert(vocab.contains("a"))
+    assert(vocab.contains("b"))
+    assert(vocab.contains("c"))
+
+    // Check that <unk> token is added at the end
+    assert(vocab.contains("<unk>"))
+    assert(vocab("<unk>") == vocab.size - 1) // last index
   }
 
-  "Tokenizer.getStats(...)" should "fetch the List of recurrent pairs" in {
-    assert(getStats(unsignedValues) == ListMap((97,32) -> 2, (32,116) -> 2, (32,97) -> 1, (116,32) -> 1))
+  "Tokenizer.tokenize" should "convert a string to token IDs using the vocab" in {
+    val inputChars = Seq('a', 'b', 'c')
+    val vocab = tokenizer.buildInputVocab(inputChars)
+
+    val text = "abc"
+    val tokenIds = tokenizer.tokenize(text, vocab)
+
+    // Each character should map to its correct index
+    assert(tokenIds == Seq(vocab("a"), vocab("b"), vocab("c")))
   }
 
-  "Tokenizer.mergeTokens(...)" should "merge the tokens" in {
-    assert(BPEApp.mergeTokens(ids = unsignedValues, maxId = maxId)._1 == List(257, 32, 257))
-  } */
+  "Tokenizer.tokenize" should "map unknown characters to <unk> token ID" in {
+    val inputChars = Seq('a', 'b', 'c')
+    val vocab = tokenizer.buildInputVocab(inputChars)
+
+    val text = "abx" // 'x' is unknown
+    val tokenIds = tokenizer.tokenize(text, vocab)
+
+    // 'x' should map to <unk>
+    assert(tokenIds == Seq(vocab("a"), vocab("b"), vocab("<unk>")))
+  }
+
+  "Tokenizer.tokenize" should "handle an empty string" in {
+    val vocab = tokenizer.buildInputVocab(Seq('a', 'b'))
+    val tokenIds = tokenizer.tokenize("", vocab)
+
+    // Should return an empty sequence
+    assert(tokenIds.isEmpty)
+  }
 }

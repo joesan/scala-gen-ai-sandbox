@@ -4,6 +4,10 @@ import scala.collection.immutable.ListMap
 
 package object sandbox {
 
+  private type Pair = (Int, Int)
+  private type Count = Int
+  private type TokenID = Int
+  
   case class EncodedOutput(
     encodedTokens: Seq[Int], 
     merged: Map[(Int, Int), Int], 
@@ -49,13 +53,32 @@ package object sandbox {
   }
 
   /**
+   * Computes statistics of adjacent token pairs in a sequence.
+   *
+   * @param tokens     The sequence of token IDs.
+   * @param descending If true, sorts by frequency in descending order.
+   * @return A map of token pairs and their frequencies, sorted by occurrence.
+   */
+  def getStats(tokens: Seq[Int], descending: Boolean = true): ListMap[Pair, Count] = ListMap.from {
+    tokens.sliding(2).collect { case Seq(a, b) => (a, b) }
+      .toSeq
+      .groupBy(identity)
+      .view.mapValues(_.size)
+      .toSeq
+      .sortWith {
+        case ((_, count1), (_, count2)) =>
+          if (descending) count1 > count2 else count1 < count2
+      }
+  }
+
+  /**
    * Updates the vocabulary by merging token pairs into new tokens.
    *
    * @param mergedPairs A map where keys are token pairs `(Int, Int)` that should be merged,
    *                    and values are new token indices assigned to the merged pairs.
    * @return A `Map` where merged tokens are replaced with new token representations.
    */
-  def updatedVocab(mergedPairs: Map[(Int, Int), Int]): Map[Int, Array[Int]] = {
+  /*def updatedVocab(mergedPairs: Map[(Int, Int), Int]): Map[Int, Array[Int]] = {
     mergedPairs.foldLeft(vocab()) {
       case (currentVocab, ((p0, p1), idx)) =>
         println()
@@ -63,5 +86,5 @@ package object sandbox {
         val token2 = currentVocab(p1) // Retrieve the second token
         currentVocab + (idx -> (token1 ++ token2)) // Merge and update
     }
-  }
+  } */
 }

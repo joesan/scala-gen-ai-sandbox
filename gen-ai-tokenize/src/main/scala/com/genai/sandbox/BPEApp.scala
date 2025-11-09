@@ -32,7 +32,7 @@ object BPEApp extends App {
   println(s"🔹 Tokenized IDs: $tokenIds")
 
   // 6. Encode (this will merge pairs and update vocab)
-  val encodedOutput = encoder.merge(
+  val encodedOutput = encoder.encode(
     tokens = tokenIds,
     vocab = inputVocab,
     merges = Map.empty,
