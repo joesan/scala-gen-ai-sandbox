@@ -7,7 +7,7 @@ import scala.collection.immutable.ListMap
  * TokenEncoder provides functionality to merge token pairs in a sequence
  * according to Byte Pair Encoding (BPE) rules.
  */
-object TokenEncoder {
+final class TokenEncoder(vocabConfig: VocabConfig) {
 
   private type Pair = (Int, Int)
   private type Count = Int
@@ -78,7 +78,7 @@ object TokenEncoder {
               case None =>
                 val name1 = vocab.find(_._2 == pair._1).get._1
                 val name2 = vocab.find(_._2 == pair._2).get._1
-                val newToken = s"${name1}_${name2}"
+                val newToken = s"${name1}${vocabConfig.mergeSeperator}${name2}"
                 val newVocab = vocab + (newToken -> nextId)
                 val newMerges = merges + (pair -> nextId)
                 (nextId, newVocab, newMerges, nextId + 1)
@@ -94,4 +94,7 @@ object TokenEncoder {
 
     loop(tokens, merges, vocab, nextId)
   }
+}
+object TokenEncoder {
+  def apply(vocabConfig: VocabConfig): TokenEncoder = new TokenEncoder(vocabConfig)
 }

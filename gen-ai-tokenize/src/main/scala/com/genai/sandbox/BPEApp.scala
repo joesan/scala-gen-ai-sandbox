@@ -1,73 +1,53 @@
 package com.genai.sandbox
 
 import scala.collection.immutable.ListMap
-import scala.annotation.tailrec
-
+import scala.io.Source
+import scala.util.Using
 
 /**
- * Tokenizer is a utility object that provides a function to compute the
- * frequency of consecutive byte pairs in a given sequence.
+ * BPEApp demonstrates the process of tokenizing, encoding (merging), and decoding text using Byte Pair Encoding (BPE).
  */
 object BPEApp extends App {
-  
-  private val bpeConfig = BPEConfigLoader.load()
-  // Hyperparameters
-  private val vocabSize = 276
-  private val numMerges = vocabSize - 256
 
-  private val text = "I a test a test"
-  private val tokens: Seq[Byte] = text.getBytes("UTF-8").toSeq
-  //private val maxId = tokens.map(_.toInt & 0xFF).max + 1
-  private val maxId = 256
-  val unsignedValue = tokens.map(byte => java.lang.Byte.toUnsignedInt(byte))
+  // 1. Load configuration
+  val config = BPEConfigLoader.load()
 
-  /**
-   * Merges occurrences of a specific token pair in the sequence.
-   *
-   * @param ids  The original sequence of token IDs.
-   * @param pair The token pair to be merged.
-   * @param idx  The new token ID replacing the pair.
-   * @param acc  Accumulator for recursive merging (default: empty sequence).
-   * @return The updated sequence with the merged token.
-   */
-  @tailrec
-  def merge(ids: Seq[Int], pair: (Int, Int), idx: Int, acc: Seq[Int] = Seq()): Seq[Int] = {
-    ids match {
-      case first +: second +: rest if first == pair._1 && second == pair._2 =>
-        merge(rest, pair, idx, acc :+ idx) // Replace pair with new token
-      case first +: rest =>
-        merge(rest, pair, idx, acc :+ first) // Keep token and continue
-      case Nil =>
-        acc // Return accumulated result
-    }
+  // 2. Initialize components
+  val tokenizer = new Tokenizer(config.vocabConfig)
+  val encoder = new TokenEncoder(config.vocabConfig)
+  val decoder = new TokenDecoder(config.vocabConfig)
+
+  // 3. Read input text from file
+  val inputText: String = Using.resource(Source.fromResource(config.files.inputFile)) { source =>
+    source.getLines().mkString("\n")
   }
+  println(s"📘 Loaded input from: ${config.files.inputFile}")
+  println(s"🔹 Sample: ${inputText.take(100)}...\n")
 
-  /**
-   * Performs Byte Pair Encoding (BPE) on a sequence of tokens.
-   *
-   * @param numMerges The number of merges to perform.
-   * @param ids       The initial sequence of token IDs.
-   * @param maxId     The starting ID for newly created tokens.
-   * @return A tuple containing the new token sequence and the merge mappings.
-   */
-  def mergeTokens(numMerges: Int = numMerges, ids: Seq[Int], maxId: Int): (Seq[Int], ListMap[(Int, Int), Int]) = {
-    @annotation.tailrec
-    def loop(i: Int, currentIds: Seq[Int], merges: ListMap[(Int, Int), Int]): (Seq[Int], ListMap[(Int, Int), Int]) = {
-      // Get the count of pairs in descending order, max. pair count will appear first
-      val pairStats = TokenEncoder.getStats(currentIds).collect { case (pair, count) if count > 1 => pair -> count }
+  // 4. Build initial vocab from config
+  val inputVocab: ListMap[String, Int] = tokenizer.buildInputVocab(config.inputChars)
 
-      if (pairStats.isEmpty || i >= numMerges) (currentIds, merges)
-      else {
-        val (pair, _) = pairStats.head
-        val idx = maxId + i // Keep as Int to prevent overflow
-        println(s"Merging $pair -> New Token: $idx")
-        val newIds = merge(currentIds, pair, idx)
-        val newMerges = merges + (pair -> idx)
-        loop(i + 1, newIds, newMerges)
-      }
-    }
-    require(ids.nonEmpty, "Token sequence cannot be empty")
-    require(numMerges >= 0, "Number of merges must be non-negative")
-    loop(0, ids, ListMap.empty)
-  }
+  // 5. Tokenize the input
+  val tokenIds: Seq[Int] = tokenizer.tokenize(inputText, inputVocab)
+  println(s"🔹 Tokenized IDs: $tokenIds")
+
+  // 6. Encode (this will merge pairs and update vocab)
+  val encodedOutput = encoder.merge(
+    tokens = tokenIds,
+    vocab = inputVocab,
+    merges = Map.empty,
+    nextId = inputVocab.size
+  )
+
+  println(s"🔹 Encoded tokens: ${encodedOutput.encodedTokens}")
+  println(s"🔹 Updated vocab: ${encodedOutput.updatedVocab}")
+  println(s"🔹 Merges: ${encodedOutput.merged}")
+
+  // 7. Decode back to original text
+  val decodedText = decoder.decode(
+    encodedOutput.encodedTokens,
+    encodedOutput.updatedVocab
+  )
+
+  println(s"✅ Decoded text: $decodedText")
 }

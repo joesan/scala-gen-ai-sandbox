@@ -8,7 +8,7 @@ import org.scalatest.matchers.should
 import scala.collection.immutable.ListMap
 
 
-class DecoderSpec extends AnyFlatSpec with should.Matchers with BaseSpec {
+class TokenDecoderSpec extends AnyFlatSpec with should.Matchers with BaseSpec {
 /*
   // Set up the test data
   val (seqs, mergedPairs) = BPEApp.mergeTokens(4, unsignedValues, maxId)

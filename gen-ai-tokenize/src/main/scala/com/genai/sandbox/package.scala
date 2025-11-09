@@ -11,11 +11,11 @@ package object sandbox {
     nextTokenId: Int
   )
   
-  case class VocabConfig(maxSize: Int, maxMerges: Int)
+  case class VocabConfig(maxSize: Int, maxMerges: Int, mergeSeperator: String = "_", unkToken: String = "<unk>")
   case class TokenizationConfig(minPairFrequency: Int, includeWhitespace: Boolean)
-  case class FilesConfig(vocabFile: String, mergesFile: String)
+  case class FilesConfig(vocabFile: String, mergesFile: String, inputFile: String)
   case class BpeConfig(
-    vocab: VocabConfig,
+    vocabConfig: VocabConfig,
     inputChars: Seq[Char],
     tokenization: TokenizationConfig,
     files: FilesConfig

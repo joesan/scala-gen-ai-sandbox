@@ -13,9 +13,11 @@ object BPEConfigLoader {
     val filesCfg = config.getConfig("files")
 
     BpeConfig(
-      vocab = VocabConfig(
+      vocabConfig = VocabConfig(
         maxSize = vocabCfg.getInt("max-size"),
-        maxMerges = vocabCfg.getInt("max-merges")
+        maxMerges = vocabCfg.getInt("max-merges"),
+        mergeSeperator = vocabCfg.getString("merge-separator"),
+        unkToken = vocabCfg.getString("unk-token")
       ),
       inputChars = config.getString("input-chars").toCharArray.toSeq,
       tokenization = TokenizationConfig(
@@ -24,7 +26,8 @@ object BPEConfigLoader {
       ),
       files = FilesConfig(
         vocabFile = filesCfg.getString("vocab-file"),
-        mergesFile = filesCfg.getString("merges-file")
+        mergesFile = filesCfg.getString("merges-file"),
+        inputFile = filesCfg.getString("input-file")
       )
     )
   }
