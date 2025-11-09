@@ -17,10 +17,11 @@ final class TokenDecoder(vocabConfig: VocabConfig) {
       else tokenStr.split(vocabConfig.mergeSeperator).map(expand).mkString
     }
 
-    // decode each token ID → token string → expanded form
+    // decode each token ID → token string → expanded form → reconstruct bytes
     tokens.map { id =>
       val token = idToToken.getOrElse(id, vocabConfig.unkToken)
-      new String(token.getBytes(vocabConfig.encoding), vocabConfig.encoding) // ensures same byte->char mapping
+      val expanded = expand(token)
+      new String(expanded.getBytes(vocabConfig.encoding), vocabConfig.encoding)
     }.mkString
   }
 }
