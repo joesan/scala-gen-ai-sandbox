@@ -42,4 +42,4 @@ jobs:
 
       # Run main app
       - name: Run main app
-        run: sbt "runMain com.genai.sandbox.BPEApp"
+        run: sbt "project genAITokenize" "runMain com.genai.sandbox.BPEApp"
