@@ -9,24 +9,22 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-      # Install Java
-      - name: Set up JDK 17
+      # Set up Java first
+      - name: Set up JDK
         uses: actions/setup-java@v3
         with:
           distribution: temurin
           java-version: 17
 
-      # Install Scala + sbt
+      # Set up Scala + sbt
       - name: Set up Scala and sbt
-        uses: olafurpg/setup-scala@v17
+        uses: olafurpg/setup-scala@v13   # <- Use v13 or latest stable tag
         with:
-          scala-version: '2.13.12'
-          sbt-version: '1.10.6'
+          scala-version: 2.13.12
+          sbt-version: 1.10.6
 
       # Cache sbt and Ivy dependencies
       - name: Cache sbt dependencies
