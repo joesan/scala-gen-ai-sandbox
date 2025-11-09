@@ -8,6 +8,17 @@ import scala.collection.immutable.ListMap
 final class TokenDecoder(vocabConfig: VocabConfig) {
 
   def decode(tokens: Seq[Int], vocab: ListMap[String, Int]): String = {
+    val idToToken: ListMap[Int, String] = vocab.map(_.swap)
+
+    // recursive helper for merged tokens
+    def expand(tokenStr: String): String =
+      if (!tokenStr.contains(vocabConfig.mergeSeperator)) tokenStr
+      else tokenStr.split(vocabConfig.mergeSeperator).map(expand).mkString
+
+    tokens.map(id => expand(idToToken.getOrElse(id, vocabConfig.unkToken))).mkString
+  }
+
+  def decodex(tokens: Seq[Int], vocab: ListMap[String, Int]): String = {
     // invert vocab: Int -> String
     val idToToken: ListMap[Int, String] = vocab.map(_.swap)
 
