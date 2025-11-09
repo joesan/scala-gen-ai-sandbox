@@ -7,7 +7,7 @@ package object sandbox {
   private type Pair = (Int, Int)
   private type Count = Int
   private type TokenID = Int
-  
+
   case class EncodedOutput(
     encodedTokens: Seq[Int], 
     merged: Map[(Int, Int), Int], 
@@ -20,26 +20,31 @@ package object sandbox {
   case class FilesConfig(vocabFile: String, mergesFile: String, inputFile: String)
   case class BpeConfig(
     vocabConfig: VocabConfig,
-    inputChars: Seq[Char],
+    inputChars: Option[Seq[Char]] = None,
     tokenization: TokenizationConfig,
     files: FilesConfig
   )
 
-  private val maxInitialVocabSize = 256
-
-  // Hyperparameters TODO: Get these from a conf file externally
-  private val vocabSize = 276
-  private val numMerges = vocabSize - 256
-
   /**
-   * Generates an initial vocabulary mapping each integer from `0` to `max - 1`
-   * to an array containing that integer.
+   * Builds a byte-level vocabulary mapping each byte value (0-255)
+   * to its corresponding single-character string representation.
    *
-   * @param max The maximum size of the initial vocabulary (default: `maxInitialVocabSize`).
-   * @return A `ListMap` where each key is an integer, and the value is an array containing that integer.
+   * @return ListMap[String, Int] mapping each character (as a String) to its byte value
    */
-  def vocab(max: Int = maxInitialVocabSize): ListMap[Int, Array[Int]] = {
-    ListMap.from((0 until max).map(i => i -> Array(i)))
+  def buildByteVocab(vocabConfig: VocabConfig): ListMap[String, Int] = {
+    // Create a sequence of byte values from 0 to 255
+    val bytes: Seq[Int] = 0 until 256
+
+    // Represent each byte as a string safely using ISO-8859-1 (1:1 mapping)
+    val tokens: Seq[String] = bytes.map { b =>
+      new String(Array(b.toByte), "ISO-8859-1") // maps byte directly to single char
+    }
+
+    // Build the base vocabulary: each character maps to its byte value
+    val baseVocab = ListMap(tokens.zip(bytes) *)
+
+    // Add a special <unk> token for unknown bytes
+    baseVocab + (vocabConfig.unkToken -> baseVocab.size)
   }
 
   /**
