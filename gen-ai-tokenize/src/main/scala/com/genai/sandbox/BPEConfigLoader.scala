@@ -19,7 +19,7 @@ object BPEConfigLoader {
         mergeSeperator = vocabCfg.getString("merge-separator"),
         unkToken = vocabCfg.getString("unk-token")
       ),
-      inputChars = Option(config.getString("input-chars")).map(_.toCharArray.toSeq),
+      inputChars = if (config.hasPath("input-chars")) Some(config.getString("input-chars").toCharArray.toSeq) else None,
       tokenization = TokenizationConfig(
         minPairFrequency = tokenizationCfg.getInt("min-pair-frequency"),
         includeWhitespace = tokenizationCfg.getBoolean("include-whitespace")
