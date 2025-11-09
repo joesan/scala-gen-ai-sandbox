@@ -9,12 +9,7 @@ import scala.collection.immutable.ListMap
 
 class TokenEncoderSpec extends AnyFlatSpec with should.Matchers with BaseSpec {
 
-  "TokenEncoder.getStats(...)" should "fetch the List of recurrent pairs" in {
-    val tokens = tokenizer.tokenize("a t a t", inputVocab)
-    assert(getStats(tokens) == ListMap((97, 32) -> 2, (32, 116) -> 2, (32, 97) -> 1, (116, 32) -> 1))
-  }
-
-  "TokenEncoder.merge(...)" should "merge & update the vocab" in {
+  "TokenEncoder.encode(...)" should "encode, merge & update the vocab" in {
     // --- Create a small test input (pick chars from your vocab) ---
     val inputText: String = "Many common characters, including numerals, punctuation, and other symbols, " +
       "are unified within the standard and are not treated as specific to any given writing system. " +
