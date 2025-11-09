@@ -4,17 +4,19 @@ import scala.util.Random
 import java.nio.charset.StandardCharsets
 import scala.collection.immutable.ListMap
 
-
+/**
+ * BaseSpec provides common setup and utilities for testing tokenization components.
+ */
 trait BaseSpec {
 
   // Load the default config for BPE
   val bpeConfig: BpeConfig = BPEConfigLoader.load("application.test.conf")
-  
+
   // Instantiate the necessary classes
   val tokenizer: Tokenizer = Tokenizer(bpeConfig.vocabConfig)
   val encoder: TokenEncoder = TokenEncoder(bpeConfig.vocabConfig)
   val decoder: TokenDecoder = TokenDecoder(bpeConfig.vocabConfig)
-  
+
   // Initialize the vocabulary
   val inputVocab: ListMap[String, Int] = tokenizer.buildInputVocab(bpeConfig.inputChars)
   val nextId: Int = inputVocab.size

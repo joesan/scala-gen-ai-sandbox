@@ -6,6 +6,7 @@
 *.iml
 *.ipr
 out/
+.bsp/
 
 # Workspace-specific files
 .idea/workspace.xml
