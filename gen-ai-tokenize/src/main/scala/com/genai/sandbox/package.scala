@@ -15,7 +15,7 @@ package object sandbox {
     nextTokenId: Int
   )
   
-  case class VocabConfig(encoding: String, maxSize: Int, maxMerges: Int, mergeSeperator: String = "_", unkToken: String = "<unk>")
+  case class VocabConfig(encoding: String, maxMerges: Int, mergeSeperator: String = "_", unkToken: String = "<unk>")
   case class TokenizationConfig(minPairFrequency: Int, includeWhitespace: Boolean)
   case class FilesConfig(vocabFile: String, mergesFile: String, inputFile: String)
   case class BpeConfig(
@@ -24,6 +24,27 @@ package object sandbox {
     tokenization: TokenizationConfig,
     files: FilesConfig
   )
+
+  // Recursive pretty-print function with alignment
+  def prettyPrintConfig(obj: Any, prefix: String = ""): Unit = obj match {
+    case prod: Product =>
+      prod.productIterator.zip(prod.getClass.getDeclaredFields).foreach { case (value, field) =>
+        val name = field.getName
+        value match {
+          case p: Product =>
+            println(s"$prefix$name:")
+            prettyPrintConfig(p, prefix + "  ")
+          case seq: Seq[_] =>
+            println(s"$prefix$name = [${seq.mkString(", ")}]")
+          case map: Map[_, _] =>
+            println(s"$prefix$name = {${map.map { case (k, v) => s"$k -> $v" }.mkString(", ")}}")
+          case v =>
+            println(s"$prefix$name = $v")
+        }
+      }
+    case _ =>
+      println(s"$prefix$obj")
+  }
 
   /**
    * Builds a byte-level vocabulary mapping each byte value (0-255)

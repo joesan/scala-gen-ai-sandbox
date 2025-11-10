@@ -12,6 +12,12 @@ object BPEApp extends App {
   // 1. Load configuration
   val config = BPEConfigLoader.load()
 
+  println("*" * 60)
+  println("🚀 Starting BPE Tokenization with configuration:\n")
+  // Pretty print key-values from the config
+  prettyPrintConfig(obj = config)
+  println("\n" + "*" * 60)
+
   // 2. Initialize components
   val tokenizer = new Tokenizer(config.vocabConfig)
   val encoder = new TokenEncoder(config.vocabConfig)

@@ -7,21 +7,14 @@ import scala.collection.immutable.ListMap
  */
 final class Tokenizer(vocabConfig: VocabConfig) {
 
-  /**
-   * Build the input vocabulary from a sequence of characters.
-   * Adds a special <unk> token for unknown characters.
-   */
-  def buildInputVocab(inputChars: Seq[Char]): ListMap[String, Int] = {
-    val baseVocab = ListMap.from(inputChars.zipWithIndex.map { case (ch, idx) => ch.toString -> idx })
-    baseVocab + (vocabConfig.unkToken -> baseVocab.size)  // add <unk> at the end
-  }
-
   /** Builds the input vocabulary from either config characters or full byte set */
   def buildInputVocab(inputCharsOpt: Option[Seq[Char]]): ListMap[String, Int] = {
     val vocab = inputCharsOpt match {
 
       // Case 1: Build from provided characters in config
-      case Some(inputChars) => buildInputVocab(inputChars)
+      case Some(inputChars) =>
+        val baseVocab = ListMap.from(inputChars.zipWithIndex.map { case (ch, idx) => ch.toString -> idx })
+        baseVocab + (vocabConfig.unkToken -> baseVocab.size)
 
       // Case 2: Fallback to full byte-level vocab (0–255)
       case None => buildByteVocab(vocabConfig)
