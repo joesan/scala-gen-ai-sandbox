@@ -11,7 +11,7 @@ import org.scalatest.Assertions.*
 class TokenizerSpec extends AnyFlatSpec with should.Matchers with BaseSpec {
 
   "Tokenizer.buildInputVocab" should "build a correct ListMap with <unk> at the end" in {
-    val inputChars = Seq('a', 'b', 'c')
+    val inputChars = Some(Seq('a', 'b', 'c'))
     val vocab = tokenizer.buildInputVocab(inputChars)
 
     // Check that all input characters are included
@@ -25,7 +25,7 @@ class TokenizerSpec extends AnyFlatSpec with should.Matchers with BaseSpec {
   }
 
   "Tokenizer.tokenize" should "convert a string to token IDs using the vocab" in {
-    val inputChars = Seq('a', 'b', 'c')
+    val inputChars = Some(Seq('a', 'b', 'c'))
     val vocab = tokenizer.buildInputVocab(inputChars)
 
     val text = "abc"
@@ -36,7 +36,7 @@ class TokenizerSpec extends AnyFlatSpec with should.Matchers with BaseSpec {
   }
 
   "Tokenizer.tokenize" should "map unknown characters to <unk> token ID" in {
-    val inputChars = Seq('a', 'b', 'c')
+    val inputChars = Some(Seq('a', 'b', 'c'))
     val vocab = tokenizer.buildInputVocab(inputChars)
 
     val text = "abx" // 'x' is unknown
@@ -47,7 +47,7 @@ class TokenizerSpec extends AnyFlatSpec with should.Matchers with BaseSpec {
   }
 
   "Tokenizer.tokenize" should "handle an empty string" in {
-    val vocab = tokenizer.buildInputVocab(Seq('a', 'b'))
+    val vocab = tokenizer.buildInputVocab(Some(Seq('a', 'b')))
     val tokenIds = tokenizer.tokenize("", vocab)
 
     // Should return an empty sequence
