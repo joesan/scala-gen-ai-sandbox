@@ -21,6 +21,7 @@ class TokenizerSpec extends AnyFlatSpec with should.Matchers with BaseSpec {
 
     // Check that <unk> token is added at the end
     assert(vocab.contains("<unk>"))
+    val xxx = vocab("<unk>")
     assert(vocab("<unk>") == vocab.size - 1) // last index
   }
 

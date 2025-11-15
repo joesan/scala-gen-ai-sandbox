@@ -9,19 +9,14 @@ final class Tokenizer(vocabConfig: VocabConfig) {
 
   /** Builds the input vocabulary from either config characters or full byte set */
   def buildInputVocab(inputCharsOpt: Option[Seq[Char]]): ListMap[String, Int] = {
-    val vocab = inputCharsOpt match {
-
-      // Case 1: Build from provided characters in config
+    val baseItems: Seq[(String, Int)] = inputCharsOpt match {
       case Some(inputChars) =>
-        val baseVocab = ListMap.from(inputChars.zipWithIndex.map { case (ch, idx) => ch.toString -> idx })
-        baseVocab + (vocabConfig.unkToken -> baseVocab.size)
-
-      // Case 2: Fallback to full byte-level vocab (0–255)
-      case None => buildByteVocab(vocabConfig)
+        inputChars.map(_.toString).zipWithIndex
+      case None =>
+        (0 to 255).map(b => b.toChar.toString -> b)
     }
-
-    // Add <unk> token at the end
-    vocab + (vocabConfig.unkToken -> vocab.size)
+    val itemsWithUnk = baseItems :+ (vocabConfig.unkToken -> baseItems.size)
+    ListMap.from(itemsWithUnk)
   }
 
   /**
