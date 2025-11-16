@@ -13,7 +13,7 @@ final class Tokenizer(vocabConfig: VocabConfig) {
       case Some(inputChars) =>
         inputChars.map(_.toString).zipWithIndex
       case None =>
-        (0 to 255).map(b => b.toChar.toString -> b)
+        (0 to 255).map(i => i.toChar.toString -> i)
     }
     val itemsWithUnk = baseItems :+ (vocabConfig.unkToken -> baseItems.size)
     ListMap.from(itemsWithUnk)
